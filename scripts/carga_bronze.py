@@ -39,7 +39,7 @@ ruta_csv = Path(__file__).resolve().parent.parent / "data" / "processed" / "caja
 df = pd.read_csv(ruta_csv)
 df.columns = [c.lower().replace(" ", "_").replace(".", "") for c in df.columns]
 df['fecha_carga'] = datetime.now()
-df['fuente_archivo'] = ''
+df['fuente_archivo'] = str(ruta_csv.name)
 
 try:
     with engine.connect() as conn:

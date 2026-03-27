@@ -15,3 +15,5 @@ data/
 logs/
 __pycache__/
 .DS_Store
+
+# archivos para pruebas
