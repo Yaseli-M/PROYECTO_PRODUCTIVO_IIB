@@ -57,17 +57,7 @@ def fin_extraccion_log(log_id, estado, fecha_fin, registros_procesados, detalles
         )
         conn.commit()
 
-
-
-
-def registrar_log(proceso, estado, detalles=""):
-    with engine.connect() as conn:
-        query = text("""
-            INSERT INTO meta.pipeline_log (proceso, estado, detalles, fecha_inicio)
-            VALUES (:proceso, :estado, :detalles, NOW())
-        """)
-        conn.execute(query, {"proceso": proceso, "estado": estado, "detalles": detalles})
-        conn.commit()
+#inicio carga bronze
 
 def iniciar_proceso(proceso, archivo_origen, usuario):
     with engine.connect() as conn:
@@ -80,7 +70,7 @@ def iniciar_proceso(proceso, archivo_origen, usuario):
         conn.commit()
         return result.scalar()
 
-def finalizar_proceso(log_id, estado, registros_procesados=0, detalles=None):
+def finalizar_proceso(log_id, estado, detalles, registros_procesados=0):
     with engine.connect() as conn:
         query = text("""
             UPDATE meta.pipeline_log

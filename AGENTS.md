@@ -1,35 +1,26 @@
-# AGENTS.md - Data Pipeline Project
+# OpenCode Instructions (AGENTS.md)
 
-## Overview
-Data engineering pipeline for SIS health data (Medallion: Bronze → Silver → Gold) in PostgreSQL (Supabase).
+## Architecture & Workflow
+- **Data Engineering:** Uses Medallion Architecture (Bronze -> Silver -> Gold).
+- **Processing:** Python (ETL) + PL/pgSQL (Warehouse transformations).
+- **Database:** PostgreSQL (Supabase Cloud).
+- **Incremental Loading:** Uses `meta.pipeline_config` with `last_watermark`.
 
-## Setup
-- **Venv**: `.SIS/` (activate with `source .SIS/bin/activate`).
-- **Secrets**: Requires `.secrets/.toml` (not `.env`).
-- **Directories**: Must exist: `data/raw/` and `data/processed/`.
+## Key Commands & Procedures
+- **Setup Environment:**
+  ```bash
+  mkdir -p data/raw data/processed .secrets
+  python -m venv .SIS
+  source .SIS/bin/activate
+  pip install -r requirements.txt
+  ```
+- **Ingest Data:** `python scripts/carga_bronze.py` (Expects CSVs in `data/raw/`).
+- **Transformations:** Triggered via SQL: `SELECT silver.sp_transform_bronze_to_silver();`.
 
-## Pipeline Execution
-1. **Extraction (Filter for 'CAJAMARCA')**:
-   ```bash
-   python scripts/orquestador.py
-   ```
-   *Interactive*: Prompts for years (e.g., `2017,2018`).
-2. **Load to Bronze**:
-   ```bash
-   python scripts/carga_bronze.py
-   ```
-   *Interactive*: Prompts for file selection and user email.
-   *Caution*: Database size limit (400MB). Uses `if_exists='append'` (not `replace`).
-3. **Silver/Gold**: Run SP in SQL console:
-   ```sql
-   SELECT silver.sp_transform_bronze_to_silver();
-   ```
-
-## Development Notes
-- **Imports**: Scripts use `sys.path.append(str(raiz))` to import from project root.
-- **DB Connection**: Use `db_connection.py` for SQLAlchemy engines.
-- **Logging**: Use `utils.logger.registrar_log` or `iniciar_proceso`/`finalizar_proceso`.
-- **Naming**: Columns are lowercased and snake_cased automatically during `carga_bronze`.
-
-## Git Exclusions
-`.secrets/`, `data/`, `.SIS/`, `__pycache__/`
+## Gotchas
+- **Secrets:** Keep all `.env` files inside `.secrets/` (Ignored by Git).
+- **Environment:** The project assumes a virtual environment at `.SIS/`. Always ensure this is activated.
+- **Workflow Order:** 
+  1. Load raw data (`data/raw/`).
+  2. Run `scripts/carga_bronze.py`.
+  3. Execute DB-side transformations (Silver/Gold layers).

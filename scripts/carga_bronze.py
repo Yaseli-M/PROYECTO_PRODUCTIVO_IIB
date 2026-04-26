@@ -69,9 +69,9 @@ for ruta_csv in archivos_seleccionados:
             )
             conn.commit()
             
-        finalizar_proceso(log_id, 'completado', registros_procesados=len(df))
+        finalizar_proceso(log_id, 'completado', registros_procesados=len(df), detalles=f"Cargados {len(df)} registros desde {ruta_csv.name}")
         print(f"🚀 ¡Carga de {ruta_csv.name} completada!")
         
     except Exception as e:
-        finalizar_proceso(log_id, 'error', detalle_error=str(e))
+        finalizar_proceso(log_id, 'error', detalles=f"Error al cargar {ruta_csv.name}: {e}")
         print(f"❌ Error al cargar {ruta_csv.name}: {e}")
