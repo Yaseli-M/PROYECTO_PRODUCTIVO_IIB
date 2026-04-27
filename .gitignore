@@ -1,5 +1,6 @@
 # Entorno Virtual
-venv_PP_IIB_SIS/
+.venv_PP_IIB_SIS/
+.SIS/
 
 # Datos (NUNCA SUBIR)
 data/
@@ -15,3 +16,7 @@ data/
 logs/
 __pycache__/
 .DS_Store
+
+# archivos para pruebas
+tests/
+tests/test_connection.py
